@@ -2,7 +2,7 @@
 import FormWrapper from "@/components/FormWrapper";
 import { useState } from "react";
 
-function LoginPage() {
+function RegisterPage() {
   const [hoveredTiles, setHoveredTiles] = useState([]);
 
   const handleTileHover = (index) => {
@@ -34,4 +34,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
