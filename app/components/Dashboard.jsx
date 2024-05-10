@@ -1,5 +1,6 @@
 "use client"
-import Lottie from "lottie-react";
+// import Lottie from "lottie-react";
+import Lottie from "lottie-react"
 import Bird from "../../public/bird.json"
 
 function Dashboard() {
