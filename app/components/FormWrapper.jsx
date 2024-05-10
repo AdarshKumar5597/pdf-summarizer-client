@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+
 
 function AuthForm({ type }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const router = useRouter();
 
   const {
     register,
@@ -47,6 +50,7 @@ function AuthForm({ type }) {
 
       if (result.success) {
         console.log(result);
+        router.replace("/")
       } else {
         console.log(result);
       }
