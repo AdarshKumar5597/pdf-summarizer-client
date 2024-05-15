@@ -1,5 +1,5 @@
 "use client"
-import FormWrapper from "@/components/FormWrapper";
+import FormWrapper from "@/app/components/FormWrapper";
 import { useState } from "react";
 
 function RegisterPage() {
