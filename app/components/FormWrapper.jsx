@@ -6,6 +6,8 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { RegisterUser, UserLogin } from "@/redux/slices/auth";
+import { useDispatch } from "react-redux";
 
 
 function AuthForm({ type }) {
@@ -13,6 +15,7 @@ function AuthForm({ type }) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -39,18 +42,13 @@ function AuthForm({ type }) {
     }
     console.log(data);
     try {
-      let response = await fetch(`http://localhost:4000/api/v1/${type}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      let result = await response.json();
+      
+      const result = type === "login" ?  await dispatch(UserLogin(data)) : await dispatch(RegisterUser(data));
 
+      console.log(result);
+      
       if (result.success) {
-        console.log(result);
-        router.replace("/")
+        type === "login" ? router.replace("/") : router.replace("/auth/login");
       } else {
         console.log(result);
       }
