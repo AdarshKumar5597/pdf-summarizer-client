@@ -13,7 +13,7 @@ export default function Home() {
         )
     }
   return (
-    <div>
+    <div className="overflow-hidden">
       <Dashboard/>
     </div>
   );
