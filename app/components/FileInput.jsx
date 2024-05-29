@@ -1,9 +1,19 @@
+"use client";
 import React, { useState } from "react";
 import { TbFileUpload } from "react-icons/tb";
 import { FaFileAlt, FaPlayCircle } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { jsPDF } from "jspdf";
+import { MdPictureAsPdf } from "react-icons/md";
 
-const FileInput = () => {
+const FileInput = ({ summarizedText, setSummarizedText }) => {
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const [files, setFiles] = useState([]);
 
   const handleUploadClick = () => {
@@ -38,6 +48,39 @@ const FileInput = () => {
     setFiles([...files, file]);
   };
 
+  const onSubmit = async (data) => {
+    // upload the pdf file to the server with url - 'http://localhost:4000/quicksummarize'
+    let loadingToastId = toast.loading("Summarizing your file...");
+    try {
+      const formData = new FormData();
+      formData.append("pdfFile", files[0]);
+      const response = await fetch("http://localhost:4000/quicksummarize", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      console.log(result);
+
+      if (result?.success) {
+        setSummarizedText(`${files[0].name + ' '}`.concat(result?.data));
+        toast.dismiss(loadingToastId);
+        toast.success("File summarized successfully");
+      } else {
+        toast.dismiss(loadingToastId);
+        toast.error("Error while summarizing file");
+      }
+    } catch (error) {
+      toast.dismiss(loadingToastId);
+      toast.error("Error while summarizing file");
+      console.error(error);
+    }
+  };
+
+  const handleSummarizeIconClick = () => {
+    document.getElementById("submitButton").click();
+  };
+
   return (
     <div
       className="bg-white/20 h-[80vh] w-[60%] rounded-md"
@@ -50,6 +93,7 @@ const FileInput = () => {
         action=""
         encType="multipart/form-data"
         className="p-5 flex flex-col gap-3"
+        onSubmit={handleSubmit(onSubmit)}
       >
         {/* Your existing file upload section */}
         <div className="w-full bg-white p-5 rounded-3xl border-[2px] border-dashed border-purple-600 flex flex-col gap-3 items-center">
@@ -103,11 +147,27 @@ const FileInput = () => {
                         {file.name}
                       </p>
                       <div className="flex gap-1">
-                        <FaPlayCircle className="h-[20px] w-[20px]" title="summarize" />
-                        <MdDelete className="h-[20px] w-[20px]" title="Delete" onClick={() => handleFileDelete(index)} />
+                        <FaPlayCircle
+                          className="h-[20px] w-[20px]"
+                          title="summarize"
+                          onClick={handleSummarizeIconClick}
+                        />
+                        <button
+                          type="submit"
+                          className="hidden"
+                          id="submitButton"
+                        ></button>
+                        <MdDelete
+                          className="h-[20px] w-[20px]"
+                          title="Delete"
+                          onClick={() => handleFileDelete(index)}
+                        />
                       </div>
                     </div>
-                    <div className={`text-gray-400 text-xs font-semibold flex`} style={{ paddingLeft: "10px" }}>
+                    <div
+                      className={`text-gray-400 text-xs font-semibold flex`}
+                      style={{ paddingLeft: "10px" }}
+                    >
                       {(file.size / 1024).toFixed(2)} KB
                     </div>
                   </div>

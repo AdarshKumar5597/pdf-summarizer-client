@@ -99,6 +99,7 @@ export function UserLogin(formValues) {
 export function RegisterUser(formValues) {
   return async (dispatch, getState) => {
     try {
+      console.log("Registering user", JSON.stringify(formValues));
       dispatch(slice.actions.registerUser({ isLoading: true, user: null }));
       let response = await fetch(`http://localhost:4000/api/v1/register`, {
         method: "POST",
