@@ -3,13 +3,11 @@ import jsPDF from "jspdf";
 import React from "react";
 import { MdPictureAsPdf } from "react-icons/md";
 
-const SummarizedText = ({ summarizedText }) => {
+const SummarizedText = ({ summarizedText, summarizedPdf }) => {
   const convertToPDF = async () => {
-    const pdfPattern = /\b[\w\s-]+\.pdf\b/gi;
-    const matches = summarizedText.match(pdfPattern);
     const doc = new jsPDF();
     doc.text(summarizedText, 10, 10);
-    doc.save(`${matches[0]}_summary.pdf`);
+    doc.save(`${summarizedPdf.summarizedName}`);
   };
 
   return (

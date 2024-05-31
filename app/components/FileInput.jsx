@@ -5,16 +5,17 @@ import { FaFileAlt, FaPlayCircle } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { jsPDF } from "jspdf";
-import { MdPictureAsPdf } from "react-icons/md";
+import { useSelector } from "react-redux";
 
-const FileInput = ({ summarizedText, setSummarizedText }) => {
+const FileInput = ({ summarizedText, setSummarizedText, setSummarizedPdf }) => {
   const {
     handleSubmit,
     formState: { errors },
   } = useForm();
 
   const [files, setFiles] = useState([]);
+  const [currentPdf, setCurrentPdf] = useState(0);
+  const { user } = useSelector((state) => state.auth);
 
   const handleUploadClick = () => {
     document.getElementById("fileupload").click();
@@ -53,17 +54,24 @@ const FileInput = ({ summarizedText, setSummarizedText }) => {
     let loadingToastId = toast.loading("Summarizing your file...");
     try {
       const formData = new FormData();
-      formData.append("pdfFile", files[0]);
+      console.log(files[currentPdf]);
+      console.log("User in FileInput:", user);
+      formData.append("pdfFile", files[currentPdf]);
       const response = await fetch("http://localhost:4000/quicksummarize", {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+          userId: user?._id,
+        }
       });
 
       const result = await response.json();
       console.log(result);
 
       if (result?.success) {
-        setSummarizedText(`${files[0].name + ' '}`.concat(result?.data));
+        setSummarizedText(`${files[currentPdf].name + ' '}`.concat(result?.data));
+        setSummarizedPdf(result?.summarizedPdf);
         toast.dismiss(loadingToastId);
         toast.success("File summarized successfully");
       } else {
@@ -77,7 +85,8 @@ const FileInput = ({ summarizedText, setSummarizedText }) => {
     }
   };
 
-  const handleSummarizeIconClick = () => {
+  const handleSummarizeIconClick = (index) => {
+    setCurrentPdf(index);
     document.getElementById("submitButton").click();
   };
 
@@ -150,7 +159,7 @@ const FileInput = ({ summarizedText, setSummarizedText }) => {
                         <FaPlayCircle
                           className="h-[20px] w-[20px]"
                           title="summarize"
-                          onClick={handleSummarizeIconClick}
+                          onClick={() => handleSummarizeIconClick(index)}
                         />
                         <button
                           type="submit"

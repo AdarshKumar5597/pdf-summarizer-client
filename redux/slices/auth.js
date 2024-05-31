@@ -55,6 +55,8 @@ export function UserLogin(formValues) {
       });
       let result = await response.json();
 
+      console.log(result);
+
       if (result?.success) {
         dispatch(
           slice.actions.logIn({

@@ -6,9 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 const links = [
   { name: "Home", href: "/" },
-  { name: "Nav1", href: "/Nav1" },
-  { name: "Nav2", href: "/Nav2" },
-  { name: "Nav3", href: "/Nav3" },
+  { name: "summarizer", href: "/feature/summarizer" },
+  { name: "friends", href: "/feature/friends" },
+  { name: "PDFs", href: "/summarizedpdfs" },
+  { name: "Chatbot", href: "/chatbot" },
 ];
 
 export default function Navbar() {

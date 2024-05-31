@@ -1,28 +1,18 @@
 "use client"
-import { useRouter } from 'next/navigation';
 import Summariser from './Summariser';
 import Friends from './Friends';
-import Show from './Show';
-import Ai from './Ai';
 
 function Page({params}) {
-  const router = useRouter();
   const { id } = params;
 
   let componentToLoad;
 
   switch (id) {
-    case '1':
+    case 'summarizer':
       componentToLoad = <Summariser />;
       break;
-    case '2':
+    case 'friends':
       componentToLoad = <Friends />;
-      break;
-    case '3':
-      componentToLoad = <Show />;
-      break;
-    case '4':
-      componentToLoad = <Ai />;
       break;
     default:
       componentToLoad = <div>Invalid ID</div>;
