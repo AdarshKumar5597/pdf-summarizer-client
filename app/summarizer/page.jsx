@@ -1,6 +1,6 @@
 "use client";
 import FileInput from "@/app/components/FileInput";
-import bgSummarizer from "../../assets/summarizerBg.jpg";
+import bgSummarizer from "@/app/assets/summarizerBg.jpg";
 import Image from "next/image";
 import SummarizedText from "@/app/components/SummarizedText";
 import { useState } from "react";

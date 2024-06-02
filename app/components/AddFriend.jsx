@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoMdCloseCircleOutline, IoMdPersonAdd } from "react-icons/io";
 import { useSelector } from "react-redux";
@@ -28,7 +28,7 @@ const AddFriend = ({ setAddFriendOpen }) => {
       cross.classList.remove("animate-spin");
       cross.style.color = "#2C8C60";
       setAddFriendOpen(false);
-    }, 500);
+    }, 200);
   };
 
   const sendEffect = () => {
@@ -39,14 +39,16 @@ const AddFriend = ({ setAddFriendOpen }) => {
     setTimeout(() => {
       sendReq.style.boxShadow = "none";
     }, 200);
+
+    sendFriendRequest();
   };
 
   const onSubmit = async (data) => {
-    let loadingToastId = toast.loading("Searching Friend...");
+    let loadingToastId = toast.loading("Searching for your friend...");
     try {
-      data = { ...data, Uemail: user?.email };
+      console.log(data);
 
-      await fetch("http://localhost:4000//api/v1/friend/searchFriend", {
+      await fetch("http://localhost:4000/api/v1/friend/searchFriend", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,19 +58,53 @@ const AddFriend = ({ setAddFriendOpen }) => {
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            loadingToastId.dismiss();
-            toast.success("Friend Found");
+            toast.dismiss(loadingToastId);
+            toast.success("Friend Found!");
             setFriendFound(data.data);
           } else {
-            loadingToastId.dismiss();
-            toast.error(data.msg);
+            toast.dismiss(loadingToastId);
+            toast.error(data.msg || "Error while searching friend.");
           }
         });
     } catch (error) {
-      loadingToastId.dismiss();
       console.error(error);
-      toast.error("Server Error");
+      toast.dismiss(loadingToastId);
+      toast.error("Error while searching friend.");
     }
+  };
+
+  const sendFriendRequest = async () => {
+    let loadingToastId = toast.loading("Sending Friend Request...");
+    try {
+      await fetch("http://localhost:4000/api/v1/friend/sendRequest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Uemail: user.email,
+          Femail: friendFound.email,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            toast.dismiss(loadingToastId);
+            toast.success("Friend Request Sent!");
+          } else {
+            toast.dismiss(loadingToastId);
+            toast.error(data.msg || "Error while sending friend request.");
+          }
+        });
+    } catch (error) {
+      console.error(error);
+      toast.dismiss(loadingToastId);
+      toast.error("Error while sending friend request.");
+    }
+  }
+
+  const handleResultCross = () => {
+    setFriendFound(null);
   };
 
   return (
@@ -105,8 +141,8 @@ const AddFriend = ({ setAddFriendOpen }) => {
             <input
               type="email"
               name="Femail"
-              className="bg-inherit text-[#3ebc3e] text-sm font-body px-1 py-2 outline-none border-b-[2px] border-[#2C8C60] font-semibold"
-              {...register("fEmail", {
+              className="input-field text-[#3ebc3e] text-sm font-body px-1 py-2 outline-none border-b-[2px] border-[#2C8C60] font-semibold"
+              {...register("Femail", {
                 required: "This field is required",
               })}
             />
@@ -116,27 +152,31 @@ const AddFriend = ({ setAddFriendOpen }) => {
               </p>
             )}
 
-            <button className=" p-2 bg-[#2C8C60] rounded-md text-white font-bold font-body">
+            <button
+              className=" p-2 bg-[#2C8C60] rounded-md text-white font-bold font-body"
+              type="submit"
+            >
               Find
             </button>
           </label>
 
-          { friendFound &&
-            <div className="w-[20vw] border-[2px] border-[#2C8C60] rounded-md p-5 absolute bottom-5 left-12 flex items-center justify-between">
+          {friendFound && (
+            <div className="w-[20vw] border-[2px] border-[#2C8C60] rounded-md p-3 absolute bottom-5 left-12 flex items-center justify-between">
               <p className="max-w-[12vw] flex items-center text-white font-body font-semibold overflow-x-scroll whitespace-nowrap scrollbar-hide">
-                {
-                    friendFound?.username
-                }
+                {friendFound?.username}
               </p>
               <div className="flex gap-5">
                 <IoSendOutline
                   className="text-red-600 rotate-[-45deg] sendReq"
                   onClick={sendEffect}
-                 />
-                <IoMdCloseCircleOutline className="h-5 w-5" />
+                />
+                <IoMdCloseCircleOutline
+                  className="h-5 w-5"
+                  onClick={handleResultCross}
+                />
               </div>
             </div>
-          }
+          )}
         </div>
       </form>
 

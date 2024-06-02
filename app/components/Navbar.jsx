@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 const links = [
   { name: "Home", href: "/" },
-  { name: "summarizer", href: "/feature/summarizer" },
-  { name: "friends", href: "/feature/friends" },
+  { name: "summarizer", href: "/summarizer" },
+  { name: "friends", href: "/friends" },
   { name: "PDFs", href: "/summarizedpdfs" },
   { name: "Chatbot", href: "/chatbot" },
 ];

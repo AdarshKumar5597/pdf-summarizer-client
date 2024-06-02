@@ -6,7 +6,6 @@ import '../styles/styles.css';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
-import Image from 'next/image';
 
 function Feature() {
     const router = useRouter();

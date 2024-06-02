@@ -308,3 +308,14 @@ body {
 .goddess {
   filter: drop-shadow(0 0 0.75rem #2C8C60);
 }
+
+/* styles.css */
+.input-field {
+  background-color: inherit;
+  transition: background-color 0.3s ease;
+}
+
+.input-field:focus {
+  background-color: inherit;
+  outline: none;
+}

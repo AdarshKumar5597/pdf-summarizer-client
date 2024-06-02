@@ -2,15 +2,15 @@
 
 import Lottie from "lottie-react"
 import Bird from "../../public/bird.json"
-import Link from "next/link";
 import Feature from "./Feature";
+import Link from "next/link";
 
 function Dashboard() {
     const style = {
         height: '90%',
     }
     return (
-        <div>
+        <div className=" max-h-[85vh] overflow-y-scroll">
             <div className="flex h-[85vh]">
                 <div className="w-1/2 ">
                     <div className=" h-full">
