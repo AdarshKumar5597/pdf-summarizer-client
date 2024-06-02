@@ -1,6 +1,10 @@
+import FirendsSidebar from "@/app/components/FirendsSidebar"
+
 function Friends() {
   return (
-    <div>Friends</div>
+    <div className="flex justify-end p-5">
+      <FirendsSidebar />
+    </div>
   )
 }
 
