@@ -6,7 +6,7 @@ import { MdOutlineArrowOutward } from "react-icons/md";
 import { IoMdDownload } from "react-icons/io";
 import jsPDF from "jspdf";
 
-const SummarizedPdfCard = ({ pdf, user }) => {
+const SummarizedPdfCard = ({ pdf, user, setSharePdf, setSelectedPdf }) => {
   const convertToPDF = async () => {
     const doc = new jsPDF();
     const text = pdf.summarizedContent;
@@ -70,9 +70,9 @@ const SummarizedPdfCard = ({ pdf, user }) => {
         </div>
         <div className="glass"></div>
         <div className="content">
-          <span className="title">{pdf.summarizedName}</span>
+          <span className="title">{pdf.summarizedName.substring(0, 13)+"..."}</span>
           <span className="text">
-            Created From: {pdf.originalName} <br />
+            Created From: {pdf.originalName.substring(0, 5)+"..."} <br />
             Created By: {user.username} <br />
             Created At: {pdf.createdAt.substring(0, 10)}
           </span>
@@ -80,10 +80,20 @@ const SummarizedPdfCard = ({ pdf, user }) => {
         <div className="bottom">
           <div className="social-buttons-container">
             <button className="social-button .social-button1" title="share">
-              <FaShare color="#00894D" />
+              <FaShare
+                color="#00894D"
+                onClick={() => {
+                  setSelectedPdf(pdf);
+                  setSharePdf(true);
+                }}
+              />
             </button>
             <button className="social-button .social-button2" title="open">
-              <MdOutlineArrowOutward color="#00894D" className=" font-bold" onClick={openPdf}/>
+              <MdOutlineArrowOutward
+                color="#00894D"
+                className=" font-bold"
+                onClick={openPdf}
+              />
             </button>
             <button className="social-button .social-button2" title="download">
               <IoMdDownload

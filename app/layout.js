@@ -16,12 +16,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} overflow-hidden`}>
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
-        <Toaster />
-        <ToastContainer />
+          <Providers>
+            <Navbar />
+            {children}
+          </Providers>
+          <Toaster />
+          <ToastContainer />
       </body>
     </html>
   );

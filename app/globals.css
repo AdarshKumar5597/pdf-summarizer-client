@@ -319,3 +319,7 @@ body {
   background-color: inherit;
   outline: none;
 }
+
+.friendAnimation {
+  filter: drop-shadow(0 0 50px #4169E1);
+}

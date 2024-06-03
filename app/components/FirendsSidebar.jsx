@@ -8,10 +8,16 @@ import Image from "next/image";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import AddFriend from "./AddFriend";
 import { useSelector } from "react-redux";
-import Loader from "@/app/assets/loader.gif"
+import Loader from "@/app/assets/loader.gif";
+import toast from "react-hot-toast";
 
-const FirendsSidebar = () => {
-  const [addFriendOpen, setAddFriendOpen] = useState(false);
+const FirendsSidebar = ({
+  addFriendOpen,
+  setAddFriendOpen,
+  setSharePdf,
+  sharePdf,
+  selectedPdf,
+}) => {
   const [onPendingMode, setOnPendingMode] = useState(false);
   const [onAllFriendsMode, setOnAllFriendsMode] = useState(true);
   const [onSearchMode, setOnSearchMode] = useState(false);
@@ -151,7 +157,7 @@ const FirendsSidebar = () => {
     window.location.reload();
   };
 
-  const handleSearchFriendsChange =  (e) => {
+  const handleSearchFriendsChange = (e) => {
     const searchValue = e.target.value;
     if (searchValue === "") {
       setIsSearchFieldDirty(false);
@@ -164,11 +170,37 @@ const FirendsSidebar = () => {
         friend.username.toLowerCase().includes(searchValue.toLowerCase())
       )
     );
-  }
+  };
 
   const imageLoader = () => {
     return <Image src={Loader} alt="User Avatar" height={40} width={40} />;
-  }
+  };
+
+  const handleSharePdf = async (Femail) => {
+    const url = "http://localhost:4000/api/v1/friend/sharePdf";
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Uemail: user.email,
+        Femail: Femail,
+        pdfId: selectedPdf._id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          console.log(data.msg);
+          toast.success(data.msg);
+        } else {
+          toast.error(data.msg);
+        }
+      });
+
+    setSharePdf(false);
+  };
 
   return (
     <div className="relative">
@@ -178,7 +210,7 @@ const FirendsSidebar = () => {
         </div>
       )}
       <div
-        className={`w-[20vw] h-full flex flex-col border border-white rounded-t-3xl rounded-b-3xl relative ${
+        className={`w-[20vw] flex flex-col border border-white rounded-t-3xl rounded-b-3xl relative ${
           addFriendOpen && "blur-sm"
         }`}
       >
@@ -227,13 +259,26 @@ const FirendsSidebar = () => {
                   </div>
                   <div className="flex flex-col justify-center items-start">
                     <p className="text-white text-sm">{friend.username}</p>
-                    <button
-                      id={"button" + index.toString()}
-                      className="sendMessage text-white text-xs bg-[#4169E1] p-1 rounded-lg font-bold font-body px-2"
-                      onClick={() => onButtonClickEffect(index)}
-                    >
-                      Send a message
-                    </button>
+                    {sharePdf ? (
+                      <button
+                        id={"button" + index.toString()}
+                        className="sendMessage text-white text-xs bg-[#4169E1] p-1 rounded-lg font-bold font-body px-2"
+                        onClick={async () => {
+                          onButtonClickEffect(index);
+                          await handleSharePdf(friend?.email);
+                        }}
+                      >
+                        Share Pdf
+                      </button>
+                    ) : (
+                      <button
+                        id={"button" + index.toString()}
+                        className="sendMessage text-white text-xs bg-[#4169E1] p-1 rounded-lg font-bold font-body px-2"
+                        onClick={() => onButtonClickEffect(index)}
+                      >
+                        Send a message
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className=" bg-gradient-to-r from-blue-800 via-green-400 to-blue-500 h-[2px] w-[90%] mx-auto"></div>
@@ -294,15 +339,13 @@ const FirendsSidebar = () => {
                 className="input-field text-[#3ebc3e] text-sm font-body px-1 py-2 outline-none border-b-[2px] border-[#2C8C60] font-semibold"
                 onChange={handleSearchFriendsChange}
               />
-              {
-                isSearchFieldDirty && searchFriends.length === 0 && (
-                  <div className="flex justify-center items-center h-[50%]">
-                    <p className="text-white text-lg">No Friends Found</p>
-                  </div>
-                )
-              }
-              {
-                searchFriends.length > 0 && searchFriends.map((friend, index) => (
+              {isSearchFieldDirty && searchFriends.length === 0 && (
+                <div className="flex justify-center items-center h-[50%]">
+                  <p className="text-white text-lg">No Friends Found</p>
+                </div>
+              )}
+              {searchFriends.length > 0 &&
+                searchFriends.map((friend, index) => (
                   <div key={index}>
                     <div className="flex p-5 gap-3 items-center">
                       <div className="rounded-full">
@@ -327,17 +370,23 @@ const FirendsSidebar = () => {
                     </div>
                     <div className=" bg-gradient-to-r from-blue-800 via-green-400 to-blue-500 h-[2px] w-[90%] mx-auto"></div>
                   </div>
-                ))
-              }
+                ))}
             </div>
           )}
         </div>
 
         <div className="h-[10%] w-full flex items-center justify-between bg-[#1E1F21] p-3 rounded-b-3xl">
-          <button className="bg-white rounded-lg p-1 flex items-center gap-1 justify-center text-black text-sm font-semibold font-body px-4">
-            <IoMdCloseCircleOutline className="h-5 w-5" />
-            <p>Close</p>
-          </button>
+          {sharePdf && (
+            <button
+              className="bg-white rounded-lg p-1 flex items-center gap-1 justify-center text-black text-sm font-semibold font-body px-4"
+              onClick={() => {
+                setSharePdf(false);
+              }}
+            >
+              <IoMdCloseCircleOutline className="h-5 w-5" />
+              <p>Close</p>
+            </button>
+          )}
         </div>
       </div>
     </div>
